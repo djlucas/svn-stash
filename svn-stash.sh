@@ -42,4 +42,11 @@ svn-unstash() {
     fi
 }
 
+_svn-unstash() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local list=$(svn-stash-list | awk '{print $1}')
+    COMPREPLY=( $(compgen -W "$list" -- $cur) )
+}
+complete -F _svn-unstash svn-unstash
+
 export -f svn-stash svn-stash-list svn-unstash
