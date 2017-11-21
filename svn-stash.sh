@@ -42,11 +42,26 @@ svn-unstash() {
     fi
 }
 
+svn-restash() {
+    if [ "${#}" -ne "1" ]; then
+        echo "Does not rediff, only patches with --reverse-diff:"
+        echo "Usage: svn-restash <STASH_NAME>"
+    fi
+    if [ ! -f ".${1}.svnstash" ]; then
+        echo "Error: No file named '.${1}.svnstash' found."
+        echo "Usage: svn-restash <STASH_NAME>"
+        echo "See output of svn-stash-list"
+    else
+        svn patch --reverse-diff ".${1}.svnstash"
+    fi
+}
+
 _svn-unstash() {
     local cur=${COMP_WORDS[COMP_CWORD]}
     local list=$(svn-stash-list | awk '{print $1}')
     COMPREPLY=( $(compgen -W "$list" -- $cur) )
 }
 complete -F _svn-unstash svn-unstash
+complete -F _svn-unstash svn-restash
 
 export -f svn-stash svn-stash-list svn-unstash
